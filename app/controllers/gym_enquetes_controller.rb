@@ -1,12 +1,12 @@
 class GymEnquetesController < ApplicationController
-  before_action :set_gym_enquete, only: %i[ show edit update destroy ]
+  before_action :set_gym_enquete, only: [:show, :edit, :update, :destroy]
 
-  # GET /gym_enquetes or /gym_enquetes.json
+  # GET /gym_enquetes
   def index
     @gym_enquetes = GymEnquete.all
   end
 
-  # GET /gym_enquetes/1 or /gym_enquetes/1.json
+  # GET /gym_enquetes/1
   def show
   end
 
@@ -19,41 +19,30 @@ class GymEnquetesController < ApplicationController
   def edit
   end
 
-  # POST /gym_enquetes or /gym_enquetes.json
+  # POST /gym_enquetes
   def create
     @gym_enquete = GymEnquete.new(gym_enquete_params)
 
-    respond_to do |format|
-      if @gym_enquete.save
-        format.html { redirect_to @gym_enquete, notice: "Gym enquete was successfully created." }
-        format.json { render :show, status: :created, location: @gym_enquete }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @gym_enquete.errors, status: :unprocessable_entity }
-      end
+    if @gym_enquete.save
+      redirect_to @gym_enquete, notice: I18n.t('successes.submit', name: @gym_enquete.model_name.human)
+    else
+      render :new
     end
   end
 
-  # PATCH/PUT /gym_enquetes/1 or /gym_enquetes/1.json
+  # PATCH/PUT /gym_enquetes/1
   def update
-    respond_to do |format|
-      if @gym_enquete.update(gym_enquete_params)
-        format.html { redirect_to @gym_enquete, notice: "Gym enquete was successfully updated." }
-        format.json { render :show, status: :ok, location: @gym_enquete }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @gym_enquete.errors, status: :unprocessable_entity }
-      end
+    if @gym_enquete.update(gym_enquete_params)
+      redirect_to @gym_enquete, notice: I18n.t('successes.update', name: @gym_enquete.model_name.human)
+    else
+      render :edit
     end
   end
 
-  # DELETE /gym_enquetes/1 or /gym_enquetes/1.json
+  # DELETE /gym_enquetes/1
   def destroy
     @gym_enquete.destroy
-    respond_to do |format|
-      format.html { redirect_to gym_enquetes_url, notice: "Gym enquete was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to gym_enquetes_url, notice: I18n.t('successes.destroy', name: @gym_enquete.model_name.human)
   end
 
   private
@@ -62,7 +51,7 @@ class GymEnquetesController < ApplicationController
       @gym_enquete = GymEnquete.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+    # Only allow a trusted parameter "white list" through.
     def gym_enquete_params
       params.require(:gym_enquete).permit(:name, :mail, :age, :course_id, :score, :request, :present_id)
     end
